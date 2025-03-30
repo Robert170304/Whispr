@@ -1,13 +1,15 @@
 import { View } from 'react-native';
-import UploadScreen from './src/screens/UploadScreen/UploadScreen';
-import Header from './src/components/Header/Header';
 import styles from './AppStyles'; // Import styles
+import { Provider } from 'react-redux';
+import store from './src/redux/store';
+import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Header />
-      <UploadScreen />
-    </View>
+    <Provider store={store}>
+      <View style={styles.container}>
+        <AppNavigator />
+      </View>
+    </Provider>
   );
 }

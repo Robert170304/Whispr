@@ -10,8 +10,8 @@ const theme = {
         lightYellowShade: '#fedaa0',
     },
     fonts: {
-        regular: 'OpenSans-Regular',
-        bold: 'OpenSans-Bold',
+        regular: 'Ubuntu-Regular',
+        bold: 'Ubuntu-Bold',
     },
 };
 
