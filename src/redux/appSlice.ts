@@ -28,6 +28,13 @@ const appSlice = createSlice({
         addRecording: (state, action) => {
             state.recordings.push(action.payload);
         },
+        updateRecordingTitle: (state, action) => {
+            const { id, newTitle } = action.payload;
+            const recording = state.recordings.find((rec) => rec.id === id);
+            if (recording) {
+                recording.title = newTitle;
+            }
+        },
 
         // Upload Reducers
         startUpload: (state) => {
@@ -37,7 +44,7 @@ const appSlice = createSlice({
             state.uploads.uploadedFile = action.payload;
             state.uploads.isUploading = false;
         },
-        resetUploads: (state) => {
+        resetUpload: (state) => {
             state.uploads.uploadedFile = null;
         },
     },
@@ -47,8 +54,9 @@ export const {
     deleteRecording,
     startUpload,
     completeUpload,
-    resetUploads,
-    addRecording
+    resetUpload,
+    addRecording,
+    updateRecordingTitle
 } = appSlice.actions;
 
 export default appSlice.reducer;

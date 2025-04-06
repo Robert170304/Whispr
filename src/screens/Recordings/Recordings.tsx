@@ -6,12 +6,13 @@ import { Ionicons, MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
 import CatSittingInTheHouse from '../../../assets/icons/cat-sitting-in-the-house.svg';
 import * as DocumentPicker from 'expo-document-picker';
 import { useSelector, useDispatch } from 'react-redux';
-import { completeUpload } from '../../redux/appSlice';
+import { completeUpload, deleteRecording, updateRecordingTitle } from '../../redux/appSlice';
 import { useNavigation } from '@react-navigation/native';
 import type { NavigationProps } from '../../../types/AppNavigatorTypes';
 import { Audio } from 'expo-av';
 import theme from '../../../ theme';
-import ContextMenuView from "react-native-context-menu-view";
+import { Menu } from 'react-native-paper';
+import { TextInput as PaperTextInput } from 'react-native-paper';
 
 const MAX_TRANSCRIPTION_LINES = 3;
 
@@ -27,6 +28,8 @@ const Recordings = () => {
     const transcriptionHeights = useRef<{ [key: string]: { collapsed: number, expanded: number } }>({});
     const [heightAnimations, setHeightAnimations] = useState<{ [key: string]: Animated.Value }>({});
     const [contextMenuVisible, setContextMenuVisible] = useState(false);
+    const [editNameId, setEditNameId] = useState<string | null>(null);
+    const [editedTitle, setEditedTitle] = useState<string>('');
 
     // Initialize animation values for each item
     recordings.forEach((recording: Recording) => {
@@ -135,6 +138,29 @@ const Recordings = () => {
         recording.title.toLowerCase().includes(searchValue.toLowerCase())
     );
 
+    const handleEditPress = (recording: any) => {
+        setEditNameId(recording.id);
+        setEditedTitle(recording.title); // Initialize with the current title
+    };
+
+    const handleBlur = (recordingId: string) => {
+        if (editedTitle.trim() && editedTitle !== recordings.find((r: Recording) => r.id === recordingId)?.title) {
+            console.log("🚀 ~ handleBlur ~ editedTitle:", editedTitle)
+            dispatch(updateRecordingTitle({ id: recordingId, newTitle: editedTitle }));
+        }
+        setEditNameId(null); // Exit edit mode
+        setEditedTitle("");
+    };
+
+    const handleMenuItemPress = (action: string, recording: Recording) => {
+        setContextMenuVisible(false);
+        if (action === 'rename') {
+            handleEditPress(recording)
+        } else if (action === 'delete') {
+            dispatch(deleteRecording(recording.id));
+        }
+    };
+
     return (
         <View
             onStartShouldSetResponderCapture={() => {
@@ -169,18 +195,39 @@ const Recordings = () => {
                                                     color={theme.colors.secondary}
                                                 />
                                             </TouchableOpacity>
-                                            <CustomText style={styles.recordingTitle}>{recording.title}</CustomText>
+                                            {editNameId !== recording.id ? <CustomText style={styles.recordingTitle}>{recording.title}</CustomText> :
+                                                <PaperTextInput
+                                                    value={editedTitle}
+                                                    onChangeText={setEditedTitle}
+                                                    style={styles.recordingTitleInput}
+                                                    onBlur={() => handleBlur(recording.id)}
+                                                    underlineColor={theme.colors.secondary}
+                                                    activeUnderlineColor={theme.colors.secondary}
+                                                    cursorColor={theme.colors.secondary}
+                                                />}
                                         </View>
-                                        {/* <View>
-                                            <ContextMenuView
-                                                actions={[{ title: "Rename" }, { title: "Delete", destructive: true }]}
-                                                onPress={(event: { nativeEvent: { name: string } }) => console.log(event.nativeEvent.name)}
-                                            >
-                                                <TouchableOpacity onPress={() => setContextMenuVisible(true)}>
-                                                    <MaterialIcons name="more-vert" size={30} color={theme.colors.primary} />
-                                                </TouchableOpacity>
-                                            </ContextMenuView>
-                                        </View> */}
+                                        {editNameId !== recording.id && <View style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                        }}>
+                                            <Menu
+                                                contentStyle={{
+                                                    backgroundColor: theme.colors.background,
+                                                    borderWidth: 1,
+                                                    borderColor: '#ccc',
+                                                    borderRadius: 10,
+                                                }}
+                                                visible={contextMenuVisible}
+                                                onDismiss={() => setContextMenuVisible(false)}
+                                                anchor={
+                                                    <TouchableOpacity onPress={() => setContextMenuVisible(true)}>
+                                                        <MaterialIcons name="more-vert" size={30} color={theme.colors.primary} />
+                                                    </TouchableOpacity>
+                                                }>
+                                                <Menu.Item leadingIcon="circle-edit-outline" onPress={() => handleMenuItemPress("rename", recording)} title="Rename" />
+                                                <Menu.Item leadingIcon="delete-outline" onPress={() => handleMenuItemPress("delete", recording)} title="Delete" />
+                                            </Menu>
+                                        </View>}
                                     </View>
 
                                     {/* Animated View for Smooth Slide */}

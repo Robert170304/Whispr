@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator();
 const AppNavigator = () => {
     return (
         <>
-            <StatusBar barStyle="light-content" />
+            <StatusBar barStyle="dark-content" backgroundColor={theme.colors.lightYellowShade} />
             <NavigationContainer>
                 <Stack.Navigator screenOptions={{
                     headerTintColor: theme.colors.primary,
@@ -20,6 +20,9 @@ const AppNavigator = () => {
                     },
                     headerTitleAlign: 'center',
                     headerShadowVisible: false,
+                    headerStyle: {
+                        backgroundColor: theme.colors.lightYellowShade,
+                    },
                 }}>
                     <Stack.Screen name="Recordings" component={Recordings} />
                     <Stack.Screen name="Upload" component={UploadScreen} />

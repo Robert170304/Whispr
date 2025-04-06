@@ -78,7 +78,7 @@ const UploadScreen = () => {
         } as any); // `as any` to avoid TypeScript complaints
 
         try {
-            const res = await fetch("https://cb50-103-247-54-217.ngrok-free.app/transcribe", {
+            const res = await fetch("https://6c50-103-247-54-82.ngrok-free.app/transcribe", {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data", // No need to set boundary, RN handles it
@@ -100,7 +100,7 @@ const UploadScreen = () => {
     const copyToClipboard = async () => {
         if (transcription) {
             await Clipboard.setStringAsync(transcription);
-            alert("Transcription copied to clipboard!");
+            ToastAndroid.show('Transcription copied to clipboard!', ToastAndroid.SHORT);
         }
     };
 
@@ -136,7 +136,7 @@ const UploadScreen = () => {
 
 
     return (
-        <ScrollView>
+        <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
             <View style={styles.container}>
                 <View style={styles.audioRecorderContainer}>
                     {/* <AudioRecorder
@@ -187,9 +187,9 @@ const UploadScreen = () => {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <CustomText style={styles.modalTitle} >Add a title to save recording</CustomText>
+                        <CustomText style={styles.modalTitle} >Give a name to this recording</CustomText>
                         <TextInput
-                            placeholder="Enter title"
+                            placeholder="Enter name"
                             value={title}
                             onChangeText={setTitle}
                             style={styles.modalInput}

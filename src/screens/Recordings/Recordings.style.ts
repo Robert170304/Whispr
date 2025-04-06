@@ -151,7 +151,12 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5, // Shadow for Android
     },
-
+    recordingTitleInput: {
+        fontSize: 16,
+        fontFamily: theme.fonts.regular,
+        backgroundColor: "#f0f0f0",
+        flex: 1,
+    },
 });
 
 export default styles;
